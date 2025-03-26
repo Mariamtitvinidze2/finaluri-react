@@ -84,13 +84,13 @@ const LoginPage = () => {
       ) : (
         <div className="text-center">
           <Header />
-          <h2 className="text-2xl font-bold mt-6">Welcome to your profile!</h2>
+{/*          
           <button
             onClick={() => setIsLoggedIn(false)}
             className="mt-4 bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-lg font-bold"
           >
             Log Out
-          </button>
+          </button> */}
         </div>
       )}
     </div>
