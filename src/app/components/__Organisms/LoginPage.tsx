@@ -6,6 +6,7 @@ import Link from "next/link";
 import Header from "../__molecules/Header";
 import SignUpPage from "./SignupPage";
 
+
 const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -34,7 +35,7 @@ const LoginPage = () => {
       {!isLoggedIn ? (
         showSignUp ? (
           <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center bg-gray-100">
-            <SignUpPage />
+            <SignUpPage/>
           </div>
         ) : (
           <div className="flex w-[80%] max-w-[1000px] items-center justify-between">
