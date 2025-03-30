@@ -2,10 +2,9 @@
 import { useState } from "react";
 import { auth } from "../../../../firebaseConfig";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import Link from "next/link";  
+import Link from "next/link";
 import Header from "../__molecules/Header";
 import SignUpPage from "./SignUpPage";
-
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
@@ -19,6 +18,7 @@ const LoginPage = () => {
         await signInWithEmailAndPassword(auth, email, password);
         setIsLoggedIn(true);
       } catch (error) {
+        console.error("Login error:", error); // Log the error if you want to debug it
         alert("Invalid credentials. Please try again.");
       }
     } else {
@@ -35,7 +35,7 @@ const LoginPage = () => {
       {!isLoggedIn ? (
         showSignUp ? (
           <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center bg-gray-100">
-            <SignUpPage/>
+            <SignUpPage />
           </div>
         ) : (
           <div className="flex w-[80%] max-w-[1000px] items-center justify-between">
@@ -72,7 +72,8 @@ const LoginPage = () => {
               </p>
               <hr className="my-4" />
               <Link href="/Signup">
-                <button onClick={handleSignUpPage}
+                <button
+                  onClick={handleSignUpPage}
                   className="w-full bg-green-500 hover:bg-green-600 text-white py-2 rounded-lg font-bold"
                 >
                   Create new account

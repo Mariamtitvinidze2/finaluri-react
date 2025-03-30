@@ -6,6 +6,7 @@ import Header from "../__molecules/Header";
 import Link from "next/link";
 import translations from "../../../data.json"; 
 import { Translations, Translation } from "../../translations";
+import { FirebaseError } from "firebase/app"; 
 interface Dob {
   month: string;
   day: string;
@@ -20,24 +21,34 @@ const SignUpPage: React.FC = () => {
   const [error, setError] = useState<string>(""); 
   const [isSignedUp, setIsSignedUp] = useState<boolean>(false); 
   const [language, setLanguage] = useState<string>("en");
+
+
+  const translationData = translations as Translations;
+  const t: Translation = translationData[language];
+
   const handleSignUp = async (): Promise<void> => {
     if (email && password && name && surname && dob) {
       try {
-        await createUserWithEmailAndPassword(auth, email, password); 
-        setIsSignedUp(true); 
-      } catch (error: any) {
-        console.error("Error code:", error.code);
-        console.error("Error message:", error.message);
-        if (error.code === "auth/email-already-in-use") {
-          setError("This email is already in use. Please choose another one.");
+        await createUserWithEmailAndPassword(auth, email, password);
+        setIsSignedUp(true);
+      } catch (error: unknown) {
+        if (error instanceof FirebaseError) {
+          console.error("Error code:", error.code);
+          console.error("Error message:", error.message);
+          if (error.code === "auth/email-already-in-use") {
+            setError("This email is already in use. Please choose another one.");
+          } else {
+            setError("An error occurred. Please try again later.");
+          }
         } else {
-          setError("An error occurred. Please try again later.");
+          setError("An unexpected error occurred.");
         }
       }
     } else {
       alert("Please fill in all fields!");
     }
   };
+
   const handleDobChange = (e: ChangeEvent<HTMLSelectElement>): void => {
     const { name, value } = e.target;
     setDob((prev) => ({
@@ -45,11 +56,10 @@ const SignUpPage: React.FC = () => {
       [name]: value,
     }));
   };
+
   const handleChange = (e: ChangeEvent<HTMLInputElement>): void => {
     console.log("Selected gender:", e.target.value);
   };
-  const translationData = translations as Translations;
-  const t: Translation = translationData[language]; 
   return (
     <div className="h-screen overflow-y-auto bg-gray-100">
       <div className="min-h-screen flex flex-col">

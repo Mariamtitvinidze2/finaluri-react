@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from "react";
+import { useState, useEffect } from "react"; 
 import { auth } from "../../../../firebaseConfig";
 import { signOut } from "firebase/auth";
 import { db } from "../../../../firebaseConfig";
@@ -74,7 +74,13 @@ const Header = () => {
   const handleToggle = () => {
     setIsOpen(!isOpen);
   };
-  
+
+
+  if (!user) {
+    return (
+      <div>Loading...</div>  
+    );
+  }
 
   return (
     <div className="flex flex-col h-screen">
@@ -142,8 +148,6 @@ const Header = () => {
                     width={40} 
                     height={40} 
                     className="rounded-full mr-2"
-
-
                   />
                   <div>
                     <p className="font-medium">{firstName} {lastName}</p>
@@ -158,13 +162,13 @@ const Header = () => {
                   Help & Support
                 </button>
                 <div className="border-t border-gray-200 my-1"></div>
-                <Link href="/">
-                <button 
-                  onClick={handleLogout}
-                  className="w-full text-left px-4 py-2 hover:bg-gray-100 text-red-500"
+                <Link href="/login">
+                  <button 
+                    onClick={handleLogout}
+                    className="w-full text-left px-4 py-2 hover:bg-gray-100 text-red-500"
                   >
-                  Log Out
-                </button>
+                    Log Out
+                  </button>
                 </Link>
               </div>
             )}
@@ -173,7 +177,6 @@ const Header = () => {
       </header>
       <div className="flex gap-[185px] bg-gray-200 bflex-grow p-4"> 
         <div className="flex mt-[76px] shadow-md flex-col gap-[10px] w-[300px] h-[88vh] overflow-y-scroll">
-          
           <Firstesction />
           <div>
             <button onClick={handleToggle} className="bg-gray-300 text-white w-[40px] h-[40px] rounded-[30px]">
@@ -185,10 +188,10 @@ const Header = () => {
           </div>
         </div>
         <div className="flex flex-col gap-20px mt-[76px]">
-            <PostSection/>
+          <PostSection />
         </div>
         <div className="flex flex-col gap-4 mt-[76px]">
-            <ThirdSection/>
+          <ThirdSection />
         </div>
       </div>
     </div>
