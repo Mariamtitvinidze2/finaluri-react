@@ -4,7 +4,7 @@ import { auth } from "../../../../firebaseConfig";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import Link from "next/link";  
 import Header from "../__molecules/Header";
-import SignUpPage from "./SignupPage";
+import SignUpPage from "./SignUpPage";
 
 
 const LoginPage = () => {
