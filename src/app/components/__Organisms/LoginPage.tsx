@@ -71,7 +71,7 @@ const LoginPage = () => {
                 Forgot password?
               </p>
               <hr className="my-4" />
-              <Link href="/Authorization">
+              <Link href="/Signup">
                 <button
                   onClick={handleSignUpPage}
                   className="w-full bg-green-500 hover:bg-green-600 text-white py-2 rounded-lg font-bold"
