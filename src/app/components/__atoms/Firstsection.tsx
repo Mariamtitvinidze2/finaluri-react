@@ -14,7 +14,7 @@ import Fundraisers from "../Images/Fundraisers.png";
 const Firstsection = () => {
   const [userName, setUserName] = useState('');
   
-  useEffect(() => {
+  useEffect(() => {              
  
     const firstName = localStorage.getItem("firstName") || '';
     const lastName = localStorage.getItem("lastName") || '';
