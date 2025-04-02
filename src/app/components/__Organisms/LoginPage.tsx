@@ -18,7 +18,7 @@ const LoginPage = () => {
         await signInWithEmailAndPassword(auth, email, password);
         setIsLoggedIn(true);
       } catch (error) {
-        console.error("Login error:", error); // Log the error if you want to debug it
+        console.error("Login error:", error);
         alert("Invalid credentials. Please try again.");
       }
     } else {
