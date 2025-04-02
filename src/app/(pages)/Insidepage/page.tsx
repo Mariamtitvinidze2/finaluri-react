@@ -1,12 +1,12 @@
 
-import Header from '../../../app/components/__molecules/Header'
+import Inside from '@/app/components/__organisms/Inside'
 import React from 'react'
 
 
 const page = () => {
   return (
     <div>
-       <Header/>
+       <Inside/>
     </div>
   )
 }
