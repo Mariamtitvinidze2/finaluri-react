@@ -6,7 +6,7 @@ import Link from "next/link";
 import Header from "../__molecules/Header";
 import SignUpPage from "./SignUp";
 
-const LoginPage = () => {
+const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -91,4 +91,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default Login;

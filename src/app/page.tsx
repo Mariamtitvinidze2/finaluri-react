@@ -1,9 +1,9 @@
-import LoginPage from "./components/__organisms/LoginPage";
+import Login from "./components/__organisms/Login";
 
 export default function Home() {
   return (
     <>
-    <LoginPage/>
+    <Login/>
     </>
   );
 }
