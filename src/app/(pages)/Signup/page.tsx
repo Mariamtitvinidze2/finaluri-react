@@ -1,11 +1,11 @@
-import SignUpPage from "../../components/__organisms/SignUpPage"
+import SignUp from "../../components/__organisms/SignUp"
 
 import React from 'react'
 
 const page = () => {
   return (
     <div>
-      <SignUpPage />
+      <SignUp />
     </div>
   )
 }

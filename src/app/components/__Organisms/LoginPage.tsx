@@ -4,7 +4,7 @@ import { auth } from "../../../../firebaseConfig";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import Link from "next/link";
 import Header from "../__molecules/Header";
-import SignUpPage from "./SignUpPage";
+import SignUpPage from "./SignUp";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");

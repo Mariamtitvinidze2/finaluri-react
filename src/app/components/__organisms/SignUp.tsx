@@ -12,7 +12,7 @@ interface Dob {
   day: string;
   year: string;
 }
-const SignUpPage: React.FC = () => {
+const SignUp: React.FC = () => {
   const [name, setName] = useState<string>("");
   const [surname, setSurname] = useState<string>("");
   const [dob, setDob] = useState<Dob>({ month: "Jan", day: "1", year: "2000" });
@@ -230,4 +230,4 @@ const SignUpPage: React.FC = () => {
     </div>
   );
 };
-export default SignUpPage;
+export default SignUp;
