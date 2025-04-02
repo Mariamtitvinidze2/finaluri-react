@@ -10,6 +10,7 @@ import Feeds from "../Images/Feeds.png";
 import Events from "../Images/Events.png";
 import AdsManeger from "../Images/AdsManeger.png";
 import Fundraisers from "../Images/Fundraisers.png";
+import Link from 'next/link';
 
 const Firstsection = () => {
   const [userName, setUserName] = useState('');
@@ -25,6 +26,7 @@ const Firstsection = () => {
     <div className="space-y-2">
       
       <div className="flex items-center gap-3 p-2 hover:bg-gray-100 rounded-lg cursor-pointer">
+        <Link href="/Profile">
         <Image 
           src={DefaultProfilePic} 
           alt="User Profile" 
@@ -32,6 +34,7 @@ const Firstsection = () => {
           height={50}
           className="rounded-full"
         />
+        </Link>
         <h1 className="font-semibold text-slate-950">{userName}</h1>
       </div>
       <div className='flex items-center gap-2 p-2 hover:bg-gray-100 rounded-lg cursor-pointer'> 
