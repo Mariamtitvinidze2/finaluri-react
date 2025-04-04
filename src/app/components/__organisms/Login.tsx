@@ -3,7 +3,7 @@ import { useState } from "react";
 import { auth } from "../../../../firebaseConfig";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import Link from "next/link";
-import Header from "../__molecules/Header";
+
 import SignUpPage from "./SignUp";
 
 const Login = () => {
@@ -17,6 +17,7 @@ const Login = () => {
       try {
         await signInWithEmailAndPassword(auth, email, password);
         setIsLoggedIn(true);
+        window.location.href = "/Insidepage"; 
       } catch (error) {
         console.error("Login error:", error);
         alert("Invalid credentials. Please try again.");
@@ -83,9 +84,7 @@ const Login = () => {
           </div>
         )
       ) : (
-        <div>
-          <Header />
-        </div>
+        <div></div>
       )}
     </div>
   );
