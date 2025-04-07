@@ -166,7 +166,7 @@ const SignUp: React.FC = () => {
                 ))}
               </p>
               <div className="flex justify-center mt-5">
-                <Link href="Insidepage">
+                <Link href="/Authinside">
                   <button
                     onClick={handleSignUp}
                     className="bg-green-600 text-white py-2 rounded-lg font-bold w-[240px]"

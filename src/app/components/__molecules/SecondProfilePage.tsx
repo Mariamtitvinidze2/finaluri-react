@@ -4,7 +4,8 @@ import Layout from "../__molecules/Layout";
 import Profile from "../Images/DefaultProfilePic.png"; 
 import Image, { StaticImageData } from "next/image";
 import { PencilIcon, XMarkIcon } from "@heroicons/react/24/solid"; 
-import SecondPostSection from "../__atoms/SecondPostSection";
+
+import ThirdPostSection from "../../components/__atoms/ThirdPostSection";
 
 const SecondProfilePage: React.FC = () => {
   const [modalOpen, setModalOpen] = useState<boolean>(false);
@@ -14,10 +15,12 @@ const SecondProfilePage: React.FC = () => {
   const [profilePhoto, setProfilePhoto] = useState<StaticImageData | any>(Profile);
   const savedName = localStorage.getItem("name") || "Mari";
   const savedSurname = localStorage.getItem("surname") || "Titvinidze";
+  
   const [name, setName] = useState<string>(savedName);
   const [surname, setSurname] = useState<string>(savedSurname);
   const [editName, setEditName] = useState<string>(savedName);
   const [editSurname, setEditSurname] = useState<string>(savedSurname);
+
   const handleCoverPhotoChange = (e: ChangeEvent<HTMLInputElement>): void => {
     const file = e.target.files?.[0];
     if (file) {
@@ -48,7 +51,7 @@ const SecondProfilePage: React.FC = () => {
   const handleSave = () => {
     setName(editName);
     setSurname(editSurname);
-    localStorage.setItem("name", editName);
+    localStorage.setItem("name", editName); 
     localStorage.setItem("surname", editSurname); 
     setModalOpen(false);
   };
@@ -236,7 +239,7 @@ const SecondProfilePage: React.FC = () => {
               </div>
             </div>
           </div>
-          <SecondPostSection />
+          <ThirdPostSection />
         </div>
       </div>
     </Layout>

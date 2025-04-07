@@ -27,7 +27,7 @@ interface RecentLogin {
   photoURL: string;
 }
 
-const Header = () => {
+const Secondheader = () => {
   const [user, setUser] = useState<User | null>(null);
   const [firstName, setFirstName] = useState<string>("");
   const [lastName, setLastName] = useState<string>("");
@@ -176,7 +176,7 @@ const Header = () => {
           {showDropdown && (
             <div className="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-lg py-1 z-50 border border-gray-200">
               <Link 
-                href="/Profile" 
+                href="/AuthProfile" 
                 className="flex items-center px-4 py-2 hover:bg-gray-100"
                 onClick={() => setShowDropdown(false)}
               >
@@ -216,4 +216,4 @@ const Header = () => {
   );
 };
 
-export default Header;
+export default Secondheader;

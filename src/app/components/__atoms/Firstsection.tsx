@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+
+
 import Image from 'next/image';
 import DefaultProfilePic from '../Images/DefaultProfilePic.png';
 import Friends from '../Images/Friends.png';
@@ -13,14 +14,7 @@ import Fundraisers from "../Images/Fundraisers.png";
 import Link from 'next/link';
 
 const Firstsection = () => {
-  const [userName, setUserName] = useState('');
-  
-  useEffect(() => {              
- 
-    const firstName = localStorage.getItem("firstName") || '';
-    const lastName = localStorage.getItem("lastName") || '';
-    setUserName(`${firstName} ${lastName}`);
-  }, []);
+
 
   return (
     <div className="space-y-2">
@@ -35,7 +29,7 @@ const Firstsection = () => {
           className="rounded-full"
         />
         </Link>
-        <h1 className="font-semibold text-slate-950">{userName}</h1>
+        <h1 className="font-semibold text-base text-gray-900">Mari Titvinidze</h1>
       </div>
       <div className='flex items-center gap-2 p-2 hover:bg-gray-100 rounded-lg cursor-pointer'> 
         <Image src={Friends} alt="friends" width={30} height={30} />
