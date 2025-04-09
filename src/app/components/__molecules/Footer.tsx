@@ -4,7 +4,7 @@ import Firstsection from "../__atoms/Firstsection";
 import Secondsection from "../__atoms/Secondsection";
 import PostSection from "../__atoms/PostSection";
 import ThirdSection from "../__atoms/ThirdSection";
-import { FaChevronDown, FaChevronUp } from "react-icons/fa"; // Import arrow icons
+import { FaChevronDown, FaChevronUp } from "react-icons/fa"; 
 
 const Footer = () => {
   const [isOpen, setIsOpen] = useState(false);
