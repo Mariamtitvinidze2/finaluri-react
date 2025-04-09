@@ -215,7 +215,7 @@ const Header = ({ userId }: { userId: string }) => {
                 </>
               ) : searchQuery.trim() ? (
                 <div className="p-4 text-center text-gray-500">
-                  No results found for "{searchQuery}"
+                  No results found for {searchQuery}
                 </div>
               ) : (
                 <div className="p-4 text-center text-gray-500">

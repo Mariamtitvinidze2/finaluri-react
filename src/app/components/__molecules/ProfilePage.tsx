@@ -1,20 +1,20 @@
 "use client";
-import React, { useState, ChangeEvent, useEffect } from "react";
+import React, { useState, ChangeEvent } from "react";
 import Layout from "../__molecules/Layout";
 import Profile from "../Images/DefaultProfilePic.png"; 
 import Image, { StaticImageData } from "next/image";
 import { PencilIcon, XMarkIcon } from "@heroicons/react/24/solid"; 
 import SecondPostSection from "../__atoms/SecondPostSection";
 
-import { auth, db, storage } from "../../../../firebaseConfig";
+import { auth, db } from "../../../../firebaseConfig";
 import { doc, updateDoc } from "firebase/firestore";
 
-const SecondProfilePage: React.FC = () => {
+const ProfilePage: React.FC = () => {
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [isModalOpen, setIsModalOPen] = useState<boolean>(false);
   const [isHoveringCover, setIsHoveringCover] = useState<boolean>(false);
   const [coverPhoto, setCoverPhoto] = useState<string | null>(null); 
-  const [profilePhoto, setProfilePhoto] = useState<StaticImageData | any>(Profile);
+  const [profilePhoto, setProfilePhoto] = useState<StaticImageData | string>(Profile);
   const savedName = localStorage.getItem("name") || "Mari";
   const savedSurname = localStorage.getItem("surname") || "Titvinidze";
   const [name, setName] = useState<string>(savedName);
@@ -60,15 +60,9 @@ const SecondProfilePage: React.FC = () => {
         if (data.success) {
           const imageUrl = data.data.url;
           console.log("Uploaded to imgbb:", imageUrl);
-          setProfilePhoto({
-            src: imageUrl,
-            height: 168,
-            width: 168,
-            blurDataURL: imageUrl,
-          });
+          setProfilePhoto(imageUrl);
           localStorage.setItem("profilePhotoURL", imageUrl);
   
-          
           const user = auth.currentUser;
           if (user) {
             const userRef = doc(db, "users", user.uid);
@@ -137,10 +131,9 @@ const SecondProfilePage: React.FC = () => {
                   <Image 
                     src={profilePhoto} 
                     alt="User Profile" 
-                    width={188} 
-                    height={188} 
+                    width={168} 
+                    height={168} 
                     className="rounded-full object-cover w-full h-full"
-                    
                   />
                   <input 
                     type="file" 
@@ -288,4 +281,4 @@ const SecondProfilePage: React.FC = () => {
   );
 };
 
-export default SecondProfilePage;
+export default ProfilePage;
