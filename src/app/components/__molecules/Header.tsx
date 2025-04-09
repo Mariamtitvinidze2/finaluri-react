@@ -301,7 +301,7 @@ const Header = ({ userId }: { userId: string }) => {
           {showDropdown && (
             <div className="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-lg z-50 border border-gray-200 divide-y divide-gray-200">
               <Link 
-                href={`/profile/${userId}`} 
+                href="/Profile" 
                 className="flex items-center px-4 py-3 hover:bg-gray-100 transition-colors"
                 onClick={() => setShowDropdown(false)}
               >
