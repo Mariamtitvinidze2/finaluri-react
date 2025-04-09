@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     images: {
-        domains: ["i.pravatar.cc"], // დასაშვები დომენების სია
+        domains: ["i.pravatar.cc", 'i.ibb.co'], // დასაშვები დომენების სია
       },
 };
 

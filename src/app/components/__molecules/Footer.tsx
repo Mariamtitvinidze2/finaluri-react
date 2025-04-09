@@ -4,7 +4,7 @@ import Firstsection from "../__atoms/Firstsection";
 import Secondsection from "../__atoms/Secondsection";
 import PostSection from "../__atoms/PostSection";
 import ThirdSection from "../__atoms/ThirdSection";
-
+import { FaChevronDown, FaChevronUp } from "react-icons/fa"; // Import arrow icons
 
 const Footer = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -20,9 +20,9 @@ const Footer = () => {
         <div>
           <button
             onClick={handleToggle}
-            className="bg-gray-300 text-white w-[40px] h-[40px] rounded-[30px]"
+            className="flex items-center justify-center bg-gray-300 text-gray-700 w-[40px] h-[40px] rounded-[30px] hover:bg-gray-400 transition-colors"
           >
-            ?
+            {isOpen ? <FaChevronUp /> : <FaChevronDown />}
           </button>
           {isOpen && <Secondsection />}
         </div>
@@ -33,7 +33,6 @@ const Footer = () => {
       <div className="flex flex-col gap-4 mt-[76px]">
         <ThirdSection />
       </div>
-      
     </div>
   );
 };

@@ -1,28 +1,33 @@
 import React, { useState, useEffect, useRef } from 'react';
 import DefaultProfilePic from "../Images/DefaultProfilePic.png";
 import Image from 'next/image';
-import { FaVideo, FaRegSmile, FaThumbsUp, FaComment, FaImage, FaUserTag, FaMapMarkerAlt, FaGift } from "react-icons/fa";
+import { FaVideo, FaRegSmile, FaThumbsUp, FaComment, FaImage, FaUserTag, FaMapMarkerAlt, FaGift, FaEllipsisH, FaEdit, FaTrash } from "react-icons/fa";
 import { MdPhotoLibrary } from "react-icons/md";
 import { IoClose } from "react-icons/io5";
-import { addPostToFirestore, fetchPostsFromFirestore } from "../../firebaseService";
+import { 
+  addPostToFirestore, 
+  fetchPostsFromFirestore, 
+  updateReactionInFirestore, 
+  updatePostInFirestore, 
+  deletePostFromFirestore, 
+  addCommentToFirestore, 
+  fetchCommentsFromFirestore,
+  deleteCommentFromFirestore,
+  Post,
+  Comment
+} from "../../firebaseService";
 
-interface Post {
-  id?: string;
-  text: string;
-  image: string | null;
-  likes: number;
-  privacy: string;
-  timestamp: string;
-  reaction?: string;
-}
-
-const SecondPostSection: React.FC = () => {
+const PostSection: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isButtonOpen, setIsButtonOpen] = useState<boolean>(false);
   const [posts, setPosts] = useState<Post[]>([]);
   const [text, setText] = useState<string>("");
   const [image, setImage] = useState<string | null>(null);
   const [privacy, setPrivacy] = useState<string>("Friends");
+  const [editingPostId, setEditingPostId] = useState<string | null>(null);
+  const [showComments, setShowComments] = useState<{ [key: string]: boolean }>({});
+  const [comments, setComments] = useState<{ [key: string]: Comment[] }>({});
+  const [newComment, setNewComment] = useState<string>("");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const reactions = [
@@ -39,6 +44,14 @@ const SecondPostSection: React.FC = () => {
     const loadPosts = async () => {
       const fetchedPosts = await fetchPostsFromFirestore();
       setPosts(fetchedPosts);
+      
+      const commentsObj: { [key: string]: Comment[] } = {};
+      for (const post of fetchedPosts) {
+        if (post.id) {
+          commentsObj[post.id] = await fetchCommentsFromFirestore(post.id);
+        }
+      }
+      setComments(commentsObj);
     };
     loadPosts();
   }, []);
@@ -60,22 +73,100 @@ const SecondPostSection: React.FC = () => {
 
   const handlePost = async () => {
     if (text || image) {
-      await addPostToFirestore(text, image, privacy); 
+      if (editingPostId) {
+        await updatePostInFirestore(editingPostId, text, image, privacy);
+        setEditingPostId(null);
+      } else {
+        await addPostToFirestore(text, image, privacy);
+      }
+      
       setText("");
       setImage(null);
       setIsModalOpen(false);
       setIsButtonOpen(false);
+      
       const updatedPosts = await fetchPostsFromFirestore();
       setPosts(updatedPosts);
     }
   };
 
-  const handleReaction = (index: number, type: string) => {
-    setPosts(prevPosts => {
-      const newPosts = [...prevPosts];
-      newPosts[index].reaction = type;
-      return newPosts;
-    });
+  const handleReaction = async (postId: string, type: string) => {
+    try {
+      await updateReactionInFirestore(postId, type);
+      setPosts(prevPosts => 
+        prevPosts.map(post => 
+          post.id === postId ? { ...post, reaction: type } : post
+        )
+      );
+    } catch (error) {
+      console.error("Error updating reaction:", error);
+    }
+  };
+
+  const handleEditPost = (post: Post) => {
+    setEditingPostId(post.id || null);
+    setText(post.text);
+    setImage(post.image);
+    setPrivacy(post.privacy);
+    setIsModalOpen(true);
+  };
+
+  const handleDeletePost = async (postId: string) => {
+    if (window.confirm("Are you sure you want to delete this post?")) {
+      try {
+        await deletePostFromFirestore(postId);
+        setPosts(posts.filter(post => post.id !== postId));
+      } catch (error) {
+        console.error("Error deleting post:", error);
+      }
+    }
+  };
+
+  const toggleComments = async (postId: string) => {
+    setShowComments(prev => ({
+      ...prev,
+      [postId]: !prev[postId]
+    }));
+
+    if (!comments[postId]) {
+      const postComments = await fetchCommentsFromFirestore(postId);
+      setComments(prev => ({
+        ...prev,
+        [postId]: postComments
+      }));
+    }
+  };
+
+  const handleAddComment = async (postId: string) => {
+    if (newComment.trim()) {
+      try {
+        await addCommentToFirestore(postId, newComment);
+        setNewComment("");
+        
+        const updatedComments = await fetchCommentsFromFirestore(postId);
+        setComments(prev => ({
+          ...prev,
+          [postId]: updatedComments
+        }));
+      } catch (error) {
+        console.error("Error adding comment:", error);
+      }
+    }
+  };
+
+  const handleDeleteComment = async (postId: string, commentId: string) => {
+    if (window.confirm("Are you sure you want to delete this comment?")) {
+      try {
+        await deleteCommentFromFirestore(postId, commentId);
+        const updatedComments = await fetchCommentsFromFirestore(postId);
+        setComments(prev => ({
+          ...prev,
+          [postId]: updatedComments
+        }));
+      } catch (error) {
+        console.error("Error deleting comment:", error);
+      }
+    }
   };
 
   const getPrivacyIcon = (privacy: string) => {
@@ -127,10 +218,16 @@ const SecondPostSection: React.FC = () => {
         <div className='fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center z-50'>
           <div className='bg-white w-[500px] rounded-lg shadow-lg overflow-hidden'>
             <div className='flex justify-between items-center p-4 border-b'>
-              <h2 className='text-xl font-bold'>Create post</h2>
+              <h2 className='text-xl font-bold'>{editingPostId ? "Edit post" : "Create post"}</h2>
               <IoClose 
                 className='text-2xl cursor-pointer text-gray-500 hover:bg-gray-100 p-1 rounded-full transition' 
-                onClick={() => { setIsModalOpen(false); setIsButtonOpen(false); setImage(null); }} 
+                onClick={() => { 
+                  setIsModalOpen(false); 
+                  setIsButtonOpen(false); 
+                  setImage(null); 
+                  setEditingPostId(null);
+                  setText("");
+                }} 
               />
             </div>
             <div className='flex gap-3 items-center p-4'>
@@ -138,8 +235,6 @@ const SecondPostSection: React.FC = () => {
                 src={DefaultProfilePic} 
                 alt='Profile' 
                 width={40} 
-
-                
                 height={40} 
                 className='rounded-full object-cover border border-gray-200'
               />
@@ -167,6 +262,8 @@ const SecondPostSection: React.FC = () => {
                 <Image
                   src={image} 
                   alt='Selected' 
+                  width={500}
+                  height={300}
                   className='w-full max-h-[400px] object-contain bg-gray-100'
                 />
                 <button 
@@ -225,7 +322,7 @@ const SecondPostSection: React.FC = () => {
                   ${text.trim() || image ? 'bg-blue-500 hover:bg-blue-600' : 'bg-gray-300 cursor-not-allowed'}`}
                 disabled={!text.trim() && !image}
               >
-                Post
+                {editingPostId ? "Update Post" : "Post"}
               </button>
             </div>
           </div>
@@ -252,12 +349,31 @@ const SecondPostSection: React.FC = () => {
                   </div>
                 </div>
               </div>
+              <div className='relative group'>
+                <button className='text-gray-500 hover:bg-gray-100 p-2 rounded-full transition'>
+                  <FaEllipsisH />
+                </button>
+                <div className='absolute right-0 top-8 bg-white shadow-lg rounded-md py-1 w-40 z-10 hidden group-hover:block'>
+                  <button 
+                    onClick={() => handleEditPost(post)}
+                    className='flex items-center gap-2 w-full px-4 py-2 hover:bg-gray-100 text-left'
+                  >
+                    <FaEdit className='text-blue-500' /> Edit
+                  </button>
+                  <button 
+                    onClick={() => post.id && handleDeletePost(post.id)}
+                    className='flex items-center gap-2 w-full px-4 py-2 hover:bg-gray-100 text-left'
+                  >
+                    <FaTrash className='text-red-500' /> Delete
+                  </button>
+                </div>
+              </div>
             </div>
             <p className='mb-3'>{post.text}</p>
             {post.image && (
               <Image
-              width={500} // Set a fixed width
-    height={300}  
+                width={500}
+                height={300}
                 src={post.image} 
                 alt='Post' 
                 className='w-full rounded-lg border border-gray-200 mb-3'
@@ -273,7 +389,7 @@ const SecondPostSection: React.FC = () => {
                   {reactions.map((reaction) => (
                     <button 
                       key={reaction.type}
-                      onClick={() => handleReaction(index, reaction.type)}
+                      onClick={() => post.id && handleReaction(post.id, reaction.type)}
                       className='text-xl hover:scale-110 transition-transform duration-150'
                       title={reaction.type}
                     >
@@ -282,11 +398,70 @@ const SecondPostSection: React.FC = () => {
                   ))}
                 </div>
               </div>
-              <button className='flex items-center gap-1 hover:text-blue-500 transition'>
+              <button 
+                onClick={() => post.id && toggleComments(post.id)}
+                className='flex items-center gap-1 hover:text-blue-500 transition'
+              >
                 <FaComment />
                 <span>Comment</span>
               </button>
             </div>
+
+            {/* Comments Section */}
+            {post.id && showComments[post.id] && (
+              <div className='mt-3 border-t pt-3'>
+                <div className='space-y-3 mb-3'>
+                  {comments[post.id]?.map((comment) => (
+                    <div key={comment.id} className='flex gap-2 group'>
+                      <Image 
+                        src={DefaultProfilePic} 
+                        alt='Profile' 
+                        width={32} 
+                        height={32} 
+                        className='rounded-full object-cover border border-gray-200'
+                      />
+                      <div className='bg-gray-100 rounded-lg p-2 flex-1 relative'>
+                        <p className='font-medium text-sm'>Mari Titvinidze</p>
+                        <p className='text-sm'>{comment.text}</p>
+                        <p className='text-xs text-gray-500 mt-1'>{comment.timestamp}</p>
+                        <button 
+                          onClick={() => comment.id && post.id && handleDeleteComment(post.id, comment.id)}
+                          className='absolute -right-2 -top-2 bg-gray-200 text-gray-600 p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity'
+                          title="Delete comment"
+                        >
+                          <FaTrash size={12} />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className='flex gap-2 items-center'>
+                  <Image 
+                    src={DefaultProfilePic} 
+                    alt='Profile' 
+                    width={32} 
+                    height={32} 
+                    className='rounded-full object-cover border border-gray-200'
+                  />
+                  <div className='flex-1 flex gap-2'>
+                    <input
+                      type='text'
+                      placeholder='Write a comment...'
+                      className='flex-1 bg-gray-100 rounded-full px-3 py-1 text-sm focus:outline-none'
+                      value={newComment}
+                      onChange={(e) => setNewComment(e.target.value)}
+                      onKeyPress={(e) => e.key === 'Enter' && post.id && handleAddComment(post.id)}
+                    />
+                    <button 
+                      onClick={() => post.id && handleAddComment(post.id)}
+                      className='text-blue-500 hover:text-blue-600'
+                    >
+                      Post
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         ))}
       </div>
@@ -294,4 +469,4 @@ const SecondPostSection: React.FC = () => {
   );
 };
 
-export default SecondPostSection;
+export default PostSection;

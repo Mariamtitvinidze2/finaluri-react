@@ -5,6 +5,9 @@ import Profile from "../Images/DefaultProfilePic.png";
 import Image, { StaticImageData } from "next/image";
 import { PencilIcon, XMarkIcon } from "@heroicons/react/24/solid"; 
 import SecondPostSection from "../__atoms/SecondPostSection";
+// import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { auth, db, storage } from "../../../../firebaseConfig";
+import { doc, updateDoc } from "firebase/firestore";
 
 const SecondProfilePage: React.FC = () => {
   const [modalOpen, setModalOpen] = useState<boolean>(false);
@@ -28,23 +31,64 @@ const SecondProfilePage: React.FC = () => {
       reader.readAsDataURL(file);
     }
   };
-
-  const handleProfilePhotoChange = (e: ChangeEvent<HTMLInputElement>): void => {
+  const handleProfilePhotoChange = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setProfilePhoto({
-          src: reader.result as string,
-          height: 168,
-          width: 168,
-          blurDataURL: reader.result as string,
-        });
-      };
-      reader.readAsDataURL(file);
+  
+    if (!file) {
+      console.error("No file selected");
+      return;
     }
+  
+    const reader = new FileReader();
+    reader.onloadend = async () => {
+      const base64Image = (reader.result as string).split(",")[1]; 
+  
+      try {
+        const API_KEY = "d899988b74bde90ba87e9dc804a0243e"; 
+  
+        const formData = new FormData();
+        formData.append("key", API_KEY);
+        formData.append("image", base64Image);
+  
+        const response = await fetch("https://api.imgbb.com/1/upload", {
+          method: "POST",
+          body: formData,
+        });
+  
+        const data = await response.json();
+  
+        if (data.success) {
+          const imageUrl = data.data.url;
+          console.log("Uploaded to imgbb:", imageUrl);
+          setProfilePhoto({
+            src: imageUrl,
+            height: 168,
+            width: 168,
+            blurDataURL: imageUrl,
+          });
+          localStorage.setItem("profilePhotoURL", imageUrl);
+  
+          
+          const user = auth.currentUser;
+          if (user) {
+            const userRef = doc(db, "users", user.uid);
+            await updateDoc(userRef, {
+              img: imageUrl,
+            });
+            console.log("User photo updated in Firestore");
+          } else {
+            console.error("User not authenticated");
+          }
+        } else {
+          console.error("imgbb upload failed:", data);
+        }
+      } catch (error) {
+        console.error("Error uploading to imgbb or updating Firestore:", error);
+      }
+    };
+  
+    reader.readAsDataURL(file);
   };
-
   const handleSave = () => {
     setName(editName);
     setSurname(editSurname);
@@ -89,18 +133,19 @@ const SecondProfilePage: React.FC = () => {
           <div className="w-[75%] max-w-6xl px-3 relative">
             <div className="flex items-end relative">
               <div className="absolute -top-24 left-0">
-                <div className="relative w-[168px] h-[168px]">
+                <div className="relative w-[168px] h-[168px] rounded-full">
                   <Image 
                     src={profilePhoto} 
                     alt="User Profile" 
                     width={188} 
                     height={188} 
+                    className="rounded-full object-cover w-full h-full"
                     
                   />
                   <input 
                     type="file" 
                     accept="image/*" 
-                    className="absolute inset-0 opacity-0 cursor-pointer"
+                    className="absolute inset-0 opacity-0 cursor-pointer rounded-full"
                     onChange={handleProfilePhotoChange}
                   />
                 </div>

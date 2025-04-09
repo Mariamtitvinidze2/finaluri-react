@@ -6,14 +6,15 @@ import Image from 'next/image';
 const contacts = [
   "theo james",
   "Ryan gosling",
-  "conor Mcgregor",
-  "ornela",
+  "Morgan Freemer ",
+  "Mark Wahlberg",
   "Jake Gyllenhaal",
-  "leonardo",
+  "J.K. Simmons",
   "dwayne johnson",
   "Cillian Murphy",
-  "Vin Disel",
-  "Paul walker"
+  "Robin Williams",
+  "Paul walker",
+  "Adriano Chelentano"
 ];
 
 const ThirdSection = () => {
