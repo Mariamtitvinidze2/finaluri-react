@@ -1,14 +1,9 @@
 import React from "react";
 import Header from "./Header";
-
-type LayoutProps = {
-  children: React.ReactNode;
-} & React.ComponentProps<typeof Header>; 
-
-const Layout = ({ children, ...headerProps }: LayoutProps) => {
+const Layout = ({ children, userId }: { children: React.ReactNode; userId: string }) => {
   return (
     <div>
-      <Header {...headerProps} /> 
+      <Header userId={userId} />
       <main>{children}</main>
     </div>
   );

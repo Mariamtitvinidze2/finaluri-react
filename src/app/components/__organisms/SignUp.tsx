@@ -68,7 +68,7 @@ const SignUp: React.FC = () => {
           {isSignedUp ? (
             <div className="w-full">
               <header className="fixed top-0 left-0 w-full z-50">
-                <Header/> 
+                <Header userId="123"/> 
               </header>
               <div className="pt-[80px]"></div>
             </div>

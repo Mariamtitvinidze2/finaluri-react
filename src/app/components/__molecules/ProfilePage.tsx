@@ -98,7 +98,7 @@ const SecondProfilePage: React.FC = () => {
   };
 
   return (
-    <Layout userId={auth.currentUser?.uid || ""}>
+    <Layout userId="123">
       <div className="flex flex-col items-center w-full bg-white">
         <div className="flex flex-col items-center w-full bg-white">
           <div 
