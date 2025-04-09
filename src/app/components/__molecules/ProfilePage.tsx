@@ -5,7 +5,7 @@ import Profile from "../Images/DefaultProfilePic.png";
 import Image, { StaticImageData } from "next/image";
 import { PencilIcon, XMarkIcon } from "@heroicons/react/24/solid"; 
 import SecondPostSection from "../__atoms/SecondPostSection";
-// import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+
 import { auth, db, storage } from "../../../../firebaseConfig";
 import { doc, updateDoc } from "firebase/firestore";
 
