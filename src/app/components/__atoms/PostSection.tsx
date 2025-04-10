@@ -32,7 +32,7 @@ const PostSection: React.FC = () => {
   const [showComments, setShowComments] = useState<{ [key: string]: boolean }>({});
   const [comments, setComments] = useState<{ [key: string]: Comment[] }>({});
   const [newComment, setNewComment] = useState<string>("");
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  // const fileInputRef = useRef<HTMLInputElement>(null);
   const [currentUserId] = useState("user1"); 
 
   useEffect(() => {

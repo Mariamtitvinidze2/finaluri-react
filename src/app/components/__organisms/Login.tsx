@@ -122,7 +122,7 @@ const Login = () => {
                             className="object-cover w-full h-full"
                           />
                         </div>
-                        <span className={`text-sm font-medium ${theme === 'dark' ? 'text-white' : 'text-black'}`}>Mari titvinidze</span>
+                        <span className={`text-sm font-medium ${theme === 'dark' ? 'text-white' : 'text-black'}`}>Mari Titvinidze</span>
                       </div>
                     ))}
                     <div className={`flex flex-col items-center cursor-pointer hover:${theme === 'dark' ? 'bg-gray-800' : 'bg-gray-100'} p-2 rounded-lg`}>
