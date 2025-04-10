@@ -237,7 +237,7 @@ const Secondheader = ({ userId }: { userId: string }) => {
         </div>
       </div>
       <div className="flex items-center gap-[60px]">
-        <Link href="/Insidepage" className={`p-2 rounded-lg hover:${theme === 'dark' ? 'bg-gray-700' : 'bg-gray-100'} group`}>
+        <Link href="/Authinside" className={`p-2 rounded-lg hover:${theme === 'dark' ? 'bg-gray-700' : 'bg-gray-100'} group`}>
           <Image src={Home} alt="Home Icon" width={40} height={40} className="group-hover:opacity-80" />
         </Link>
         <Link href="/videos" className={`p-2 rounded-lg hover:${theme === 'dark' ? 'bg-gray-700' : 'bg-gray-100'} group`}>

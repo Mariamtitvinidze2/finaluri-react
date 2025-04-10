@@ -3,10 +3,11 @@
 import React, { useState } from "react";
 import Firstsection from "../__atoms/Firstsection";
 import Secondsection from "../__atoms/Secondsection";
-import PostSection from "../__atoms/PostSection";
+
 import ThirdSection from "../__atoms/ThirdSection";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import { useTheme } from "../../ThemeContext";
+import ThirdPostSection from "../__atoms/ThirdPostSection";
 
 const Secondfooter = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -31,7 +32,7 @@ const Secondfooter = () => {
         </div>
       </div>
       <div className="flex flex-col gap-20px mt-[76px]">
-        <PostSection />
+        <ThirdPostSection />
       </div>
       <div className="flex flex-col gap-4 mt-[76px]">
         <ThirdSection />

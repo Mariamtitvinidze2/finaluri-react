@@ -1,6 +1,7 @@
 import React from 'react'
-import Secondheader from '../__molecules/Secondheader'
-import Secondfooter from '../__molecules/Secondfooter'
+import Secondheader from '../__molecules/Secondheader';
+import Secondfooter from '../__molecules/Secondfooter';
+
 const Auth = () => {
   const userid = "user123"; 
   return (
