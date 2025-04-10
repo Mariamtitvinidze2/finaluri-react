@@ -1,5 +1,3 @@
-
-
 import Image from 'next/image';
 import DefaultProfilePic from '../Images/DefaultProfilePic.png';
 import Friends from '../Images/Friends.png';
@@ -12,14 +10,14 @@ import Events from "../Images/Events.png";
 import AdsManeger from "../Images/AdsManeger.png";
 import Fundraisers from "../Images/Fundraisers.png";
 import Link from 'next/link';
+import { useTheme } from "../../ThemeContext";
 
 const Firstsection = () => {
-
+  const { theme } = useTheme();
 
   return (
     <div className="space-y-2">
-      
-      <div className="flex items-center gap-3 p-2 hover:bg-gray-100 rounded-lg cursor-pointer">
+      <div className={`flex items-center gap-3 p-2 hover:${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-100'} rounded-lg cursor-pointer`}>
         <Link href="/Profile">
         <Image 
           src={DefaultProfilePic} 
@@ -29,44 +27,28 @@ const Firstsection = () => {
           className="rounded-full"
         />
         </Link>
-        <h1 className="font-semibold text-base text-gray-900">Mari Titvinidze</h1>
+        <h1 className={`font-semibold text-base ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Mari Titvinidze</h1>
       </div>
-      <div className='flex items-center gap-2 p-2 hover:bg-gray-100 rounded-lg cursor-pointer'> 
-        <Image src={Friends} alt="friends" width={30} height={30} />
-        <h1 className='text-slate-950'>Friends</h1>
-      </div>
-      <div className='flex items-center gap-2 p-2 hover:bg-gray-100 rounded-lg cursor-pointer'> 
-        <Image src={Memories} alt="memories" width={30} height={30} />
-        <h1 className='text-slate-950'>Memories</h1>
-      </div>
-      <div className='flex items-center gap-2 p-2 hover:bg-gray-100 rounded-lg cursor-pointer'> 
-        <Image src={Saved} alt="saved" width={30} height={30} />
-        <h1 className='text-slate-950'>Saved</h1>
-      </div>
-      <div className='flex items-center gap-2 p-2 hover:bg-gray-100 rounded-lg cursor-pointer'> 
-        <Image src={Gorups} alt="groups" width={30} height={30} />
-        <h1 className='text-slate-950'>Groups</h1>
-      </div>
-      <div className='flex items-center gap-2 p-2 hover:bg-gray-100 rounded-lg cursor-pointer'> 
-        <Image src={Videos} alt="videos" width={30} height={30} />
-        <h1 className='text-slate-950'>Video</h1>
-      </div>
-      <div className='flex items-center gap-2 p-2 hover:bg-gray-100 rounded-lg cursor-pointer'> 
-        <Image src={Feeds} alt="feeds" width={30} height={30} />
-        <h1 className='text-slate-950'>Feeds</h1>
-      </div>
-      <div className='flex items-center gap-2 p-2 hover:bg-gray-100 rounded-lg cursor-pointer'> 
-        <Image src={Events} alt="events" width={30} height={30} />
-        <h1 className='text-slate-950'>Events</h1>
-      </div>
-      <div className='flex items-center gap-2 p-2 hover:bg-gray-100 rounded-lg cursor-pointer'> 
-        <Image src={AdsManeger} alt="ads manager" width={30} height={30} />
-        <h1 className='text-slate-950'>Ads Manager</h1>
-      </div>
-      <div className='flex items-center gap-2 p-2 hover:bg-gray-100 rounded-lg cursor-pointer'> 
-        <Image src={Fundraisers} alt="fundraisers" width={30} height={30} />
-        <h1 className='text-slate-950'>Fundraisers</h1>
-      </div>
+      
+      {[
+        { icon: Friends, text: 'Friends' },
+        { icon: Memories, text: 'Memories' },
+        { icon: Saved, text: 'Saved' },
+        { icon: Gorups, text: 'Groups' },
+        { icon: Videos, text: 'Video' },
+        { icon: Feeds, text: 'Feeds' },
+        { icon: Events, text: 'Events' },
+        { icon: AdsManeger, text: 'Ads Manager' },
+        { icon: Fundraisers, text: 'Fundraisers' }
+      ].map((item, index) => (
+        <div 
+          key={index} 
+          className={`flex items-center gap-2 p-2 hover:${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-100'} rounded-lg cursor-pointer`}
+        >
+          <Image src={item.icon} alt={item.text.toLowerCase()} width={30} height={30} />
+          <h1 className={theme === 'dark' ? 'text-white' : 'text-slate-950'}>{item.text}</h1>
+        </div>
+      ))}
     </div>
   );
 };

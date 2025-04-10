@@ -4,6 +4,7 @@ const Layout = ({ children, userId }: { children: React.ReactNode; userId: strin
   return (
     <div>
       <Header userId={userId} />
+
       <main>{children}</main>
     </div>
   );

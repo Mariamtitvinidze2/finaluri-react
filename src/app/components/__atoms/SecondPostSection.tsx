@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { FaVideo, FaRegSmile, FaThumbsUp, FaComment, FaImage, FaEllipsisH, FaEdit, FaTrash } from "react-icons/fa";
 import { MdPhotoLibrary } from "react-icons/md";
 import { IoClose } from "react-icons/io5";
+import { useTheme } from "../../ThemeContext";
 import { 
   addPostToFirestore, 
   fetchPostsFromFirestore, 
@@ -19,6 +20,7 @@ import {
 } from "../../firebaseService";
 
 const SecondPostSection: React.FC = () => {
+  const { theme } = useTheme();
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [posts, setPosts] = useState<Post[]>([]);
   const [text, setText] = useState<string>("");
@@ -89,12 +91,23 @@ const SecondPostSection: React.FC = () => {
 
   const handleLike = async (postId: string) => {
     try {
-      const updatedLikes = await toggleLike(postId, currentUserId);
       setPosts(prevPosts => 
-        prevPosts.map(post => 
-          post.id === postId ? { ...post, likes: updatedLikes } : post
-        )
+        prevPosts.map(post => {
+          if (post.id === postId) {
+            const isLiked = post.likes.includes(currentUserId);
+            return {
+              ...post,
+              likes: isLiked 
+                ? post.likes.filter(id => id !== currentUserId)
+                : [...post.likes, currentUserId]
+            };
+          }
+          return post;
+        })
       );
+      
+      await toggleLike(postId, currentUserId);
+      
     } catch (error) {
       console.error("Error toggling like:", error);
     }
@@ -198,10 +211,10 @@ const SecondPostSection: React.FC = () => {
   };
 
   return (
-    <div className="max-w-[550px] mx-auto">
+    <div className={`max-w-[550px] mx-auto ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
 
-      <div className='bg-white rounded-lg shadow-md p-3 mb-4'>
-        <div className='flex gap-3 items-center border-b pb-3'>
+      <div className={`rounded-lg shadow-md p-3 mb-4 ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'}`}>
+        <div className={`flex gap-3 items-center border-b pb-3 ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'}`}>
           <Image 
             src={DefaultProfilePic} 
             alt='Profile' 
@@ -210,7 +223,11 @@ const SecondPostSection: React.FC = () => {
             className='rounded-full object-cover border border-gray-200'
           />
           <input 
-            className='bg-gray-100 p-2 rounded-full w-full focus:outline-none cursor-pointer hover:bg-gray-200 transition pl-4'
+            className={`p-2 rounded-full w-full focus:outline-none cursor-pointer transition pl-4 ${
+              theme === 'dark' 
+                ? 'bg-gray-700 hover:bg-gray-600 placeholder-gray-400' 
+                : 'bg-gray-100 hover:bg-gray-200 placeholder-gray-500'
+            }`}
             type="text" 
             placeholder="What's on your mind?" 
             onClick={() => setIsModalOpen(true)}
@@ -218,27 +235,41 @@ const SecondPostSection: React.FC = () => {
           />
         </div>
         <div className='flex justify-between pt-2 px-2'>
-          <button className='flex items-center gap-1 text-gray-600 hover:bg-gray-100 p-2 rounded-lg text-sm'>
+          <button className={`flex items-center gap-1 p-2 rounded-lg text-sm ${
+            theme === 'dark' ? 'text-gray-300 hover:bg-gray-700' : 'text-gray-600 hover:bg-gray-100'
+          }`}>
             <FaVideo className='text-red-500 text-lg'/> Live video
           </button>
           <button 
             onClick={() => setIsModalOpen(true)} 
-            className='flex items-center gap-1 text-gray-600 hover:bg-gray-100 p-2 rounded-lg text-sm'
+            className={`flex items-center gap-1 p-2 rounded-lg text-sm ${
+              theme === 'dark' ? 'text-gray-300 hover:bg-gray-700' : 'text-gray-600 hover:bg-gray-100'
+            }`}
           >
             <MdPhotoLibrary className='text-green-500 text-lg'/> Photo/video
           </button>
-          <button className='flex items-center gap-1 text-gray-600 hover:bg-gray-100 p-2 rounded-lg text-sm'>
+          <button className={`flex items-center gap-1 p-2 rounded-lg text-sm ${
+            theme === 'dark' ? 'text-gray-300 hover:bg-gray-700' : 'text-gray-600 hover:bg-gray-100'
+          }`}>
             <FaRegSmile className='text-yellow-500 text-lg'/> Feeling/activity
           </button>
         </div>
       </div>
       {isModalOpen && (
         <div className='fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center z-50'>
-          <div className='bg-white w-[500px] rounded-lg shadow-lg overflow-hidden'>
-            <div className='flex justify-between items-center p-4 border-b'>
-              <h2 className='text-xl font-bold'>{editingPostId ? "Edit post" : "Create post"}</h2>
+          <div className={`w-[500px] rounded-lg shadow-lg overflow-hidden ${
+            theme === 'dark' ? 'bg-gray-800' : 'bg-white'
+          }`}>
+            <div className={`flex justify-between items-center p-4 border-b ${
+              theme === 'dark' ? 'border-gray-700' : 'border-gray-200'
+            }`}>
+              <h2 className={`text-xl font-bold ${
+                theme === 'dark' ? 'text-white' : 'text-gray-900'
+              }`}>{editingPostId ? "Edit post" : "Create post"}</h2>
               <IoClose 
-                className='text-2xl cursor-pointer text-gray-500 hover:bg-gray-100 p-1 rounded-full transition' 
+                className={`text-2xl cursor-pointer p-1 rounded-full transition ${
+                  theme === 'dark' ? 'text-gray-400 hover:bg-gray-700' : 'text-gray-500 hover:bg-gray-100'
+                }`} 
                 onClick={() => { 
                   setIsModalOpen(false); 
                   setImage(null); 
@@ -256,9 +287,15 @@ const SecondPostSection: React.FC = () => {
                 className='rounded-full object-cover border border-gray-200'
               />
               <div>
-                <span className='font-medium block'>User Name</span>
+                <span className={`font-medium block ${
+                  theme === 'dark' ? 'text-white' : 'text-gray-900'
+                }`}>User Name</span>
                 <select 
-                  className='text-xs text-gray-500 border-none bg-gray-100 rounded p-1 cursor-pointer hover:bg-gray-200 transition'
+                  className={`text-xs border-none rounded p-1 cursor-pointer hover:bg-opacity-80 transition ${
+                    theme === 'dark' 
+                      ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' 
+                      : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+                  }`}
                   value={privacy}
                   onChange={(e) => setPrivacy(e.target.value)}
                 >
@@ -269,13 +306,19 @@ const SecondPostSection: React.FC = () => {
               </div>
             </div>
             <textarea 
-              className='w-full min-h-[100px] p-4 text-lg border-none focus:outline-none resize-none placeholder-gray-500'
+              className={`w-full min-h-[100px] p-4 text-lg border-none focus:outline-none resize-none ${
+                theme === 'dark' 
+                  ? 'bg-gray-800 text-white placeholder-gray-400' 
+                  : 'bg-white placeholder-gray-500'
+              }`}
               placeholder="What's on your mind?"
               value={text}
               onChange={(e) => setText(e.target.value)}
             ></textarea>
             {image && (
-              <div className='relative mx-4 mb-4 border border-gray-200 rounded-lg overflow-hidden'>
+              <div className={`relative mx-4 mb-4 rounded-lg overflow-hidden ${
+                theme === 'dark' ? 'border-gray-700' : 'border-gray-200'
+              } border`}>
                 <Image
                   src={image} 
                   alt='Selected' 
@@ -285,18 +328,28 @@ const SecondPostSection: React.FC = () => {
                 />
                 <button 
                   onClick={() => setImage(null)}
-                  className='absolute top-2 right-2 bg-gray-800 bg-opacity-50 text-white rounded-full p-1 hover:bg-opacity-70 transition'
+                  className={`absolute top-2 right-2 text-white rounded-full p-1 hover:bg-opacity-70 transition ${
+                    theme === 'dark' ? 'bg-gray-700 bg-opacity-50' : 'bg-gray-800 bg-opacity-50'
+                  }`}
                 >
                   <IoClose size={20} />
                 </button>
               </div>
             )}
-            <div className='flex justify-between items-center p-3 mx-3 mb-3 border border-gray-200 rounded-lg bg-gray-50'>
-              <span className='font-medium text-gray-700 ml-1'>Add to your post</span>
+            <div className={`flex justify-between items-center p-3 mx-3 mb-3 rounded-lg ${
+              theme === 'dark' 
+                ? 'bg-gray-700 border-gray-600' 
+                : 'bg-gray-50 border-gray-200'
+            } border`}>
+              <span className={`font-medium ml-1 ${
+                theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+              }`}>Add to your post</span>
               <div className='flex gap-1'>
                 <button 
                   onClick={triggerFileInput}
-                  className='text-green-600 hover:bg-gray-200 p-2 rounded-full transition'
+                  className={`hover:bg-opacity-20 p-2 rounded-full transition ${
+                    theme === 'dark' ? 'text-green-400 hover:bg-gray-600' : 'text-green-600 hover:bg-gray-200'
+                  }`}
                   title="Photo"
                 >
                   <FaImage size={20} />
@@ -325,7 +378,9 @@ const SecondPostSection: React.FC = () => {
       )}
       <div className='space-y-4'>
         {posts.map((post) => (
-          <div key={post.id} className='bg-white p-4 rounded-lg shadow-md'>
+          <div key={post.id} className={`p-4 rounded-lg shadow-md ${
+            theme === 'dark' ? 'bg-gray-800' : 'bg-white'
+          }`}>
          
             <div className='flex items-center justify-between mb-3'>
               <div className='flex items-center gap-2'>
@@ -337,8 +392,12 @@ const SecondPostSection: React.FC = () => {
                   className='rounded-full object-cover border border-gray-200'
                 />
                 <div>
-                  <p className='font-medium'>User Name</p>
-                  <div className='flex items-center gap-1 text-xs text-gray-500'>
+                  <p className={`font-medium ${
+                    theme === 'dark' ? 'text-white' : 'text-gray-900'
+                  }`}>Mari titvinidze</p>
+                  <div className={`flex items-center gap-1 text-xs ${
+                    theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
+                  }`}>
                     <span>{post.timestamp}</span>
                     <span>•</span>
                     <span>{getPrivacyIcon(post.privacy)} {post.privacy}</span>
@@ -346,40 +405,65 @@ const SecondPostSection: React.FC = () => {
                 </div>
               </div>
               <div className='relative group'>
-                <button className='text-gray-500 hover:bg-gray-100 p-2 rounded-full transition'>
+                <button className={`p-2 rounded-full transition ${
+                  theme === 'dark' ? 'text-gray-400 hover:bg-gray-700' : 'text-gray-500 hover:bg-gray-100'
+                }`}>
                   <FaEllipsisH />
                 </button>
-                <div className='absolute right-0 top-8 bg-white shadow-lg rounded-md py-1 w-40 z-10 hidden group-hover:block'>
+                <div className={`absolute right-0 top-8 shadow-lg rounded-md py-1 w-40 z-10 hidden group-hover:block ${
+                  theme === 'dark' ? 'bg-gray-700' : 'bg-white'
+                }`}>
                   <button 
                     onClick={() => handleEditPost(post)}
-                    className='flex items-center gap-2 w-full px-4 py-2 hover:bg-gray-100 text-left'
+                    className={`flex items-center gap-2 w-full px-4 py-2 text-left ${
+                      theme === 'dark' ? 'hover:bg-gray-600' : 'hover:bg-gray-100'
+                    }`}
                   >
-                    <FaEdit className='text-blue-500' /> Edit
+                    <FaEdit className='text-blue-500' /> 
+                    <span className={theme === 'dark' ? 'text-white' : 'text-gray-900'}>Edit</span>
                   </button>
                   <button 
                     onClick={() => post.id && handleDeletePost(post.id)}
-                    className='flex items-center gap-2 w-full px-4 py-2 hover:bg-gray-100 text-left'
+                    className={`flex items-center gap-2 w-full px-4 py-2 text-left ${
+                      theme === 'dark' ? 'hover:bg-gray-600' : 'hover:bg-gray-100'
+                    }`}
                   >
-                    <FaTrash className='text-red-500' /> Delete
+                    <FaTrash className='text-red-500' /> 
+                    <span className={theme === 'dark' ? 'text-white' : 'text-gray-900'}>Delete</span>
                   </button>
                 </div>
               </div>
             </div>
-            <p className='mb-3'>{post.text}</p>
+            <p className={`mb-3 ${theme === 'dark' ? 'text-gray-100' : 'text-gray-800'}`}>{post.text}</p>
+            
             {post.image && (
-              <Image
-                width={500}
-                height={300}
-                src={post.image} 
-                alt='Post' 
-                className='w-full rounded-lg border border-gray-200 mb-3'
-              />
+              <div 
+                className="relative mb-3"
+                onDoubleClick={() => post.id && handleLike(post.id)}
+              >
+                <Image
+                  width={500}
+                  height={300}
+                  src={post.image} 
+                  alt='Post' 
+                  className={`w-full rounded-lg ${
+                    theme === 'dark' ? 'border-gray-700' : 'border-gray-200'
+                  } border`}
+                />
+                {post.likes.includes(currentUserId) && (
+                  <FaThumbsUp className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-blue-500 text-4xl opacity-80" />
+                )}
+              </div>
             )}
-            <div className='flex items-center justify-between text-gray-500 border-t pt-2'>
+            <div className={`flex items-center justify-between border-t pt-2 ${
+              theme === 'dark' ? 'border-gray-700 text-gray-400' : 'border-gray-200 text-gray-500'
+            }`}>
               <button 
                 onClick={() => post.id && handleLike(post.id)}
-                className={`flex items-center gap-1 px-2 py-1 rounded-md hover:bg-gray-100 transition ${
-                  post.likes.includes(currentUserId) ? 'text-blue-500' : 'text-gray-500'
+                className={`flex items-center gap-1 px-2 py-1 rounded-md transition ${
+                  theme === 'dark' ? 'hover:bg-gray-700' : 'hover:bg-gray-100'
+                } ${
+                  post.likes.includes(currentUserId) ? 'text-blue-500' : ''
                 }`}
               >
                 <FaThumbsUp className={post.likes.includes(currentUserId) ? 'text-blue-500' : ''} />
@@ -388,50 +472,67 @@ const SecondPostSection: React.FC = () => {
                   {post.likes.length > 0 && ` · ${post.likes.length}`}
                 </span>
               </button>
+              
               <button 
                 onClick={() => post.id && toggleComments(post.id)}
-                className='flex items-center gap-1 px-2 py-1 rounded-md hover:bg-gray-100 transition text-gray-500'
+                className={`flex items-center gap-1 px-2 py-1 rounded-md transition ${
+                  theme === 'dark' ? 'hover:bg-gray-700' : 'hover:bg-gray-100'
+                }`}
               >
                 <FaComment />
                 <span>Comment</span>
               </button>
             </div>
             {post.id && showComments[post.id] && (
-              <div className='mt-3 border-t pt-3'>
+              <div className={`mt-3 pt-3 ${
+                theme === 'dark' ? 'border-t border-gray-700' : 'border-t border-gray-200'
+              }`}>
                 <div className='space-y-3 mb-3'>
                   {comments[post.id]?.map((comment) => (
                     <div key={comment.id} className='flex gap-2 group'>
                       <Image 
                         src={DefaultProfilePic} 
                         alt='Profile' 
-                        width={22} 
-                        height={2} 
+                        width={32} 
+                        height={32} 
                         className='rounded-full object-cover border border-gray-200'
                       />
-                      <div className='bg-gray-100 rounded-lg p-2 flex-1 relative'>
-                        <p className='font-medium text-sm'>User Name</p>
-                        <p className='text-sm'>{comment.text}</p>
+                      <div className={`rounded-lg p-2 flex-1 relative ${
+                        theme === 'dark' ? 'bg-gray-700' : 'bg-gray-100'
+                      }`}>
+                        <p className={`font-medium text-sm ${
+                          theme === 'dark' ? 'text-white' : 'text-gray-900'
+                        }`}>User Name</p>
+                        <p className={`text-sm ${
+                          theme === 'dark' ? 'text-gray-200' : 'text-gray-800'
+                        }`}>{comment.text}</p>
                         <div className='flex items-center gap-2 mt-1'>
                           <button 
                             onClick={() => comment.id && handleCommentLike(post.id!, comment.id)}
                             className={`text-xs ${
                               comment.likes?.includes(currentUserId) 
                                 ? 'text-blue-500 font-medium' 
-                                : 'text-gray-500'
+                                : theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
                             }`}
                           >
                             Like
                           </button>
                           {comment.likes?.length > 0 && (
-                            <span className='text-xs text-gray-500'>
+                            <span className={`text-xs ${
+                              theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
+                            }`}>
                               {comment.likes.length}
                             </span>
                           )}
-                          <span className='text-xs text-gray-500'>{comment.timestamp}</span>
+                          <span className={`text-xs ${
+                            theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
+                          }`}>{comment.timestamp}</span>
                         </div>
                         <button 
                           onClick={() => comment.id && post.id && handleDeleteComment(post.id, comment.id)}
-                          className='absolute -right-2 -top-2 bg-gray-200 text-gray-600 p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity'
+                          className={`absolute -right-2 -top-2 p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity ${
+                            theme === 'dark' ? 'bg-gray-600 text-gray-300' : 'bg-gray-200 text-gray-600'
+                          }`}
                           title="Delete comment"
                         >
                           <FaTrash size={12} />
@@ -452,14 +553,20 @@ const SecondPostSection: React.FC = () => {
                     <input
                       type='text'
                       placeholder='Write a comment...'
-                      className='flex-1 bg-gray-100 rounded-full px-3 py-1 text-sm focus:outline-none'
+                      className={`flex-1 rounded-full px-3 py-1 text-sm focus:outline-none ${
+                        theme === 'dark' 
+                          ? 'bg-gray-700 text-white placeholder-gray-400' 
+                          : 'bg-gray-100 text-gray-900 placeholder-gray-500'
+                      }`}
                       value={newComment}
                       onChange={(e) => setNewComment(e.target.value)}
                       onKeyPress={(e) => e.key === 'Enter' && post.id && handleAddComment(post.id)}
                     />
                     <button 
                       onClick={() => post.id && handleAddComment(post.id)}
-                      className='text-blue-500 hover:text-blue-600'
+                      className={`${
+                        theme === 'dark' ? 'text-blue-400 hover:text-blue-300' : 'text-blue-500 hover:text-blue-600'
+                      }`}
                     >
                       Post
                     </button>

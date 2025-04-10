@@ -42,8 +42,6 @@ const ThirdPostSection = () => {
     if (!text.trim() && !image) return;
     
     setIsPosting(true);
-    
-    // Simulate API call delay
     await new Promise(resolve => setTimeout(resolve, 1000));
     
     const newPost: Post = {
@@ -71,7 +69,7 @@ const ThirdPostSection = () => {
 
   return (
     <div className="max-w-[550px] mx-auto">
-      {/* Post creation form */}
+
       <div className='bg-white rounded-lg w-[510px] shadow-md p-3 mb-4'>
         <div className='flex gap-3 items-center border-b pb-3'>
           <Image 
@@ -104,8 +102,6 @@ const ThirdPostSection = () => {
           </button>
         </div>
       </div>
-
-      {/* Display created posts */}
       {posts.map(post => (
         <div key={post.id} className='bg-white rounded-lg w-[510px] shadow-md p-4 mb-4'>
           <div className='flex items-center gap-3 mb-3'>

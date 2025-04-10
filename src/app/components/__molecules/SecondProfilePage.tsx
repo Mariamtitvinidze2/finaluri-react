@@ -4,7 +4,7 @@ import Layout from "../__molecules/Layout";
 import Profile from "../Images/DefaultProfilePic.png"; 
 import Image, { StaticImageData } from "next/image";
 import { PencilIcon, XMarkIcon } from "@heroicons/react/24/solid"; 
-import SecondPostSection from "../__atoms/SecondPostSection";
+
 
 import { auth, db } from "../../../../firebaseConfig";
 import { doc, updateDoc } from "firebase/firestore";

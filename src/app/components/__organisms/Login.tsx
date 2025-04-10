@@ -1,13 +1,14 @@
 "use client";
 import { useState, useEffect } from "react";
 import { auth } from "../../../../firebaseConfig";
-import { signInWithEmailAndPassword, UserCredential } from "firebase/auth";
+import { signInWithEmailAndPassword, UserCredential, onAuthStateChanged } from "firebase/auth";
 import Link from "next/link";
 import SignUpPage from "./SignUp";
 import { db } from "../../../../firebaseConfig";
 import { doc, getDoc, DocumentSnapshot } from "firebase/firestore";
 import DefaultProfilePic from "../Images/DefaultProfilePic.png";
 import Image from "next/image";
+import { useTheme } from "../../ThemeContext";
 
 interface SavedUser {
   id: string;
@@ -23,12 +24,20 @@ const Login = () => {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [showSignUp, setShowSignUp] = useState<boolean>(false);
   const [savedUsers, setSavedUsers] = useState<SavedUser[]>([]);
-  const [selectedUser, setSelectedUser] = useState<SavedUser | null>(null);
+  const [isLoggedOut, setIsLoggedOut] = useState<boolean>(false);
+  const { theme } = useTheme();
 
   useEffect(() => {
-    // Load saved users from localStorage
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        setIsLoggedOut(true);
+      }
+    });
+    
     const saved = JSON.parse(localStorage.getItem("savedUsers") || "[]");
     setSavedUsers(Array.isArray(saved) ? saved : []);
+    
+    return () => unsubscribe();
   }, []);
 
   const handleLogin = async (): Promise<void> => {
@@ -36,8 +45,6 @@ const Login = () => {
       try {
         const userCredential: UserCredential = await signInWithEmailAndPassword(auth, email, password);
         setIsLoggedIn(true);
-        
-        // Save user to recent logins if not already saved
         const userDoc: DocumentSnapshot = await getDoc(doc(db, "users", userCredential.user.uid));
         if (userDoc.exists()) {
           const userData = userDoc.data();
@@ -53,8 +60,9 @@ const Login = () => {
           const exists: boolean = existingUsers.some((u: SavedUser) => u.id === userToSave.id);
           
           if (!exists) {
-            const updatedUsers: SavedUser[] = [userToSave, ...existingUsers].slice(0, 5); // Keep only last 5
+            const updatedUsers: SavedUser[] = [userToSave, ...existingUsers].slice(0, 5);
             localStorage.setItem("savedUsers", JSON.stringify(updatedUsers));
+            setSavedUsers(updatedUsers);
           }
         }
         
@@ -70,7 +78,6 @@ const Login = () => {
 
   const handleQuickLogin = (user: SavedUser): void => {
     if (user && user.email) {
-      setSelectedUser(user);
       setEmail(user.email);
     }
   };
@@ -80,72 +87,76 @@ const Login = () => {
   };
 
   return (
-    <div className="bg-gray-100 h-screen flex items-center justify-center w-full">
+    <div className={`${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-100'} h-screen flex items-center justify-center w-full`}>
       {!isLoggedIn ? (
         showSignUp ? (
-          <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center bg-gray-100">
+          <div className={`absolute top-0 left-0 w-full h-full flex items-center justify-center ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-100'}`}>
             <SignUpPage />
           </div>
         ) : (
           <div className="flex w-[80%] max-w-[1000px] items-center justify-between">
             <div className="w-1/2 pr-10">
-              <h1 className="text-blue-600 text-6xl font-bold">facebook</h1>
-              <p className="text-[20px] font-extrabold text-black mt-4">
-                Connect with friends and the world <br /> around you on Facebook.
-              </p>
-            </div>
-
-            <div className="flex gap-8">
-              {/* Recent Logins Section */}
-              {savedUsers.length > 0 && (
-                <div className="w-[300px] bg-white p-6 rounded-lg shadow-lg">
-                  <h2 className="text-lg font-semibold mb-4">Recent Logins</h2>
-                  <p className="text-sm text-gray-500 mb-4">Click your picture or add an account.</p>
+              <h1 className={`${theme === 'dark' ? 'text-blue-400' : 'text-blue-600'} text-6xl font-bold`}>facebook</h1>
+              {!isLoggedOut ? (
+                <p className={`text-[20px] font-extrabold ${theme === 'dark' ? 'text-white' : 'text-black'} mt-4`}>
+                  Connect with friends and the world <br /> around you on Facebook.
+                </p>
+              ) : (
+                <div className="mt-8">
+                  <h2 className={`text-2xl font-semibold mb-4 ${theme === 'dark' ? 'text-white' : 'text-black'}`}>Recent Logins</h2>
+                  <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'} mb-6`}>Click your picture or add an account.</p>
                   
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid mr-24 grid-cols-2 gap-2">
                     {savedUsers.map((user: SavedUser, index: number) => (
                       <div 
                         key={index}
                         onClick={() => handleQuickLogin(user)}
-                        className="flex flex-col items-center cursor-pointer hover:bg-gray-100 p-2 rounded"
+                        className={`flex flex-col items-center cursor-pointer hover:${theme === 'dark' ? 'bg-gray-800' : 'bg-gray-100'} p-2 rounded-lg`}
                       >
-                        <div className="w-16 h-16 rounded-full overflow-hidden mb-1">
+                        <div className={`w-30 h-30 rounded-md overflow-hidden mb-2 border ${theme === 'dark' ? 'border-gray-600' : 'border-gray-300'}`}>
                           <Image 
                             src={user.photoURL} 
                             alt={`${user.firstName} ${user.lastName}`}
-                            width={64}
-                            height={64}
-                            className="object-cover"
+                            width={120}
+                            height={120}
+                            className="object-cover w-full h-full"
                           />
                         </div>
-                        <span className="text-sm font-medium">{user.firstName}</span>
+                        <span className={`text-sm font-medium ${theme === 'dark' ? 'text-white' : 'text-black'}`}>{user.firstName}</span>
                       </div>
                     ))}
-                    <div className="flex flex-col items-center cursor-pointer hover:bg-gray-100 p-2 rounded">
-                      <div className="w-16 h-16 rounded-full border-2 border-gray-300 flex items-center justify-center mb-1">
-                        <span className="text-2xl text-gray-400">+</span>
+                    <div className={`flex flex-col items-center cursor-pointer hover:${theme === 'dark' ? 'bg-gray-800' : 'bg-gray-100'} p-2 rounded-lg`}>
+                      <div className={`w-40 h-40 rounded-md border-2 ${theme === 'dark' ? 'border-gray-600' : 'border-gray-300'} flex items-center justify-center mb-2 ${theme === 'dark' ? 'bg-gray-800' : 'bg-gray-100'}`}>
+                        <div className="text-center p-4">
+                          <Link href="/Signup">
+                          <div className={`w-16 h-16 rounded-full ${theme === 'dark' ? 'bg-blue-900' : 'bg-blue-100'} flex items-center justify-center mx-auto mb-2`}>
+                            <span className={`text-3xl ${theme === 'dark' ? 'text-blue-300' : 'text-blue-500'}`}>+</span>
+                          </div>
+                          </Link>
+                          <span className={`text-sm font-medium ${theme === 'dark' ? 'text-white' : 'text-black'}`}>Add Account</span>
+                        </div>
                       </div>
-                      <span className="text-sm font-medium">Add Account</span>
                     </div>
                   </div>
                 </div>
               )}
+            </div>
 
-              {/* Login Form */}
-              <div className="w-[400px] bg-white p-6 rounded-lg shadow-lg">
+            <div className="flex gap-8">
+              <div className={`w-[400px] ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'} p-6 rounded-lg shadow-lg`}>
                 <input
                   type="text"
                   placeholder="Email or phone number"
                   value={email}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
-                  className="w-full p-3 border text-slate-950 rounded-lg mb-3"
+                  className={`w-full p-3 border ${theme === 'dark' ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300 text-slate-950'} rounded-lg mb-3`}
                 />
                 <input
                   type="password"
                   placeholder="Password"
                   value={password}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
-                  className="w-full p-3 border text-slate-950 rounded-lg mb-3"
+                  className={`w-full p-3 border ${theme === 'dark' ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-300 text-slate-950'} rounded-lg mb-3`}
                 />
                 <button
                   onClick={handleLogin}
@@ -153,10 +164,10 @@ const Login = () => {
                 >
                   Log In
                 </button>
-                <p className="text-center text-blue-500 mt-2 cursor-pointer text-sm">
+                <p className={`text-center ${theme === 'dark' ? 'text-blue-400' : 'text-blue-500'} mt-2 cursor-pointer text-sm`}>
                   Forgot password?
                 </p>
-                <hr className="my-4" />
+                <hr className={`my-4 ${theme === 'dark' ? 'border-gray-700' : 'border-gray-300'}`} />
                 <Link href="/Signup">
                   <button
                     onClick={handleSignUpPage}
