@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import DefaultProfilePic from "../Images/DefaultProfilePic.png";
+import DefaultProfilePic from "../Images/DefaultProfile.png";
 import Image from 'next/image';
 import { FaVideo, FaRegSmile, FaThumbsUp, FaComment, FaImage, FaEllipsisH, FaEdit, FaTrash } from "react-icons/fa";
 import { MdPhotoLibrary } from "react-icons/md";

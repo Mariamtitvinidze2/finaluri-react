@@ -17,7 +17,7 @@ import Gaming from "../Images/Gaming.png";
 import Menu from "../Images/Menu.png";
 import Messenger from "../Images/Messenger.png";
 import Notifications from "../Images/Notifications.png";
-import DefaultProfilePic from "../Images/DefaultProfilePic.png";
+import DefaultProfilePic from "../Images/DefaultProfile.png";
 import { useTheme } from "../../ThemeContext";
 import { MoonIcon, SunIcon } from "@heroicons/react/24/solid";
 
