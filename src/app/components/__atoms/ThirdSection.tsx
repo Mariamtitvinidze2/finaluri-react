@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Search } from 'lucide-react';
-import DefaultProfilePic from "../Images/DefaultProfilePic.png";
+import DefaultProfile from "../Images/DefaultProfile.png";
 import Image from 'next/image';
 import { useTheme } from "../../ThemeContext";
 
@@ -52,7 +52,7 @@ const ThirdSection = () => {
             key={index} 
             className={`flex items-center space-x-3 p-2 rounded-md hover:${theme === 'dark' ? 'bg-gray-700' : 'bg-gray-200'}`}
           >
-            <Image src={DefaultProfilePic} alt='Profile' width={40} height={40} className="rounded-full" />
+            <Image src={DefaultProfile} alt='Profile' width={40} height={40} className="rounded-full" />
             <span className={theme === 'dark' ? 'text-white' : 'text-gray-800'}>{name}</span>
           </li>
         ))}

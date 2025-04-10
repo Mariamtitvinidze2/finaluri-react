@@ -115,14 +115,14 @@ const Login = () => {
                       >
                         <div className={`w-30 h-30 rounded-md overflow-hidden mb-2 border ${theme === 'dark' ? 'border-gray-600' : 'border-gray-300'}`}>
                           <Image 
-                            src={user.photoURL} 
+                            src={DefaultProfilePic}
                             alt={`${user.firstName} ${user.lastName}`}
                             width={120}
                             height={120}
                             className="object-cover w-full h-full"
                           />
                         </div>
-                        <span className={`text-sm font-medium ${theme === 'dark' ? 'text-white' : 'text-black'}`}>{user.firstName}</span>
+                        <span className={`text-sm font-medium ${theme === 'dark' ? 'text-white' : 'text-black'}`}>Mari titvinidze</span>
                       </div>
                     ))}
                     <div className={`flex flex-col items-center cursor-pointer hover:${theme === 'dark' ? 'bg-gray-800' : 'bg-gray-100'} p-2 rounded-lg`}>

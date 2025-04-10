@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import DefaultProfilePic from "../Images/DefaultProfilePic.png";
 import Image from 'next/image';
 import { FaThumbsUp, FaComment, FaEllipsisH, FaEdit, FaTrash } from "react-icons/fa";

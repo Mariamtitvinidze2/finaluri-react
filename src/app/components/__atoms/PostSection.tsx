@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import DefaultProfilePic from "../Images/DefaultProfilePic.png";
 import Image from 'next/image';
-import { FaVideo, FaRegSmile, FaThumbsUp, FaComment, FaImage, FaEllipsisH, FaEdit, FaTrash } from "react-icons/fa";
+import { FaVideo, FaRegSmile, } from "react-icons/fa";
 import { MdPhotoLibrary } from "react-icons/md";
-import { IoClose } from "react-icons/io5";
+
 import { useTheme } from "../../ThemeContext";
 import { 
   addPostToFirestore, 
