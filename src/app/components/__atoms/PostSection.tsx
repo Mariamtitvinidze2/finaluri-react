@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect} from 'react';
 import DefaultProfilePic from "../Images/DefaultProfilePic.png";
 import Image from 'next/image';
 import { FaVideo, FaRegSmile, } from "react-icons/fa";
