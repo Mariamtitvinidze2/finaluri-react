@@ -104,18 +104,34 @@ const Secondheader = ({ userId }: { userId: string }) => {
         const usersRef = collection(db, "users");
         const q = query(
           usersRef,
-          orderBy("name_lowercase"), 
+          orderBy("name"), 
           startAt(debouncedQuery.toLowerCase()),
           endAt(debouncedQuery.toLowerCase() + "\uf8ff"),
           limit(10)
         );
 
         const querySnapshot = await getDocs(q);
-        const results = querySnapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
-        })) as SearchUser[];
+        console.log("🔥 Raw docs from Firestore:");
+querySnapshot.docs.forEach((doc, i) => {
+  console.log(`Doc ${i}:`, doc.id, doc.data());
+});
 
+const results = querySnapshot.docs.map(doc => {
+  const userData = doc.data();
+  const result = {
+    id: doc.id,
+    name: userData.name ?? '',
+    username: userData.username ?? '',
+    image: userData.image ?? '',
+  };
+
+  console.log("✅ Parsed user:", result);
+
+  return result;
+}) as SearchUser[];
+
+console.log("✅ Final results array:", results);
+setSearchResults(results);
         setSearchResults(results);
       } catch (err) {
         console.error("Search error:", err);

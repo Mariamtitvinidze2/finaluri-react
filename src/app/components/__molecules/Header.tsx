@@ -104,17 +104,27 @@ const Header = ({ userId }: { userId: string }) => {
         const usersRef = collection(db, "users");
         const q = query(
           usersRef,
-          orderBy("name_lowercase"), 
+          orderBy("name"), 
           startAt(debouncedQuery.toLowerCase()),
           endAt(debouncedQuery.toLowerCase() + "\uf8ff"),
           limit(10)
         );
 
         const querySnapshot = await getDocs(q);
-        const results = querySnapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
-        })) as SearchUser[];
+        console.log("Search querySnapshot:", querySnapshot.docs.map(doc => doc.data()));
+
+        const results = querySnapshot.docs.map(doc => {
+          const userData = doc.data();
+          console.log("Processing user doc:", userData); // individual user logs
+          return {
+            id: doc.id,
+            name: userData.name ?? '',
+            username: userData.username ?? '',
+            image: userData.image ?? '',
+          };
+        }) as SearchUser[];
+
+        console.log("Final search results:", results);
 
         setSearchResults(results);
       } catch (err) {
