@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { FaVideo, FaRegSmile, FaImage, FaUserTag, FaMapMarkerAlt, FaGift } from "react-icons/fa";
 import { MdPhotoLibrary } from "react-icons/md";
 import { IoClose } from "react-icons/io5";
+import { useTheme } from "../../ThemeContext";
 
 interface Post {
   id: number;
@@ -22,6 +23,7 @@ const ThirdPostSection = () => {
   const [text, setText] = useState<string>("");
   const [posts, setPosts] = useState<Post[]>([]);
   const [isPosting, setIsPosting] = useState<boolean>(false);
+  const { theme } = useTheme();
 
   const triggerFileInput = () => {
     fileInputRef.current?.click();
@@ -69,9 +71,8 @@ const ThirdPostSection = () => {
 
   return (
     <div className="max-w-[550px] mx-auto">
-
-      <div className='bg-white rounded-lg w-[510px] shadow-md p-3 mb-4'>
-        <div className='flex gap-3 items-center border-b pb-3'>
+      <div className={`rounded-lg w-[510px] shadow-md p-3 mb-4 ${theme === 'dark' ? 'bg-gray-800' : 'bg-white'}`}>
+        <div className={`flex gap-3 items-center border-b pb-3 ${theme === 'dark' ? 'border-gray-700' : 'border-gray-200'}`}>
           <Image 
             src={DefaultProfilePic} 
             alt='Profile' 
@@ -80,7 +81,9 @@ const ThirdPostSection = () => {
             className='rounded-full object-cover border border-gray-200'
           />
           <input 
-            className='bg-gray-100 p-2 rounded-full w-full focus:outline-none cursor-pointer hover:bg-gray-200 transition pl-4'
+            className={`p-2 rounded-full w-full focus:outline-none cursor-pointer hover:bg-gray-200 transition pl-4 ${
+              theme === 'dark' ? 'bg-gray-700 text-white hover:bg-gray-600 placeholder-gray-400' : 'bg-gray-100 placeholder-gray-500'
+            }`}
             type="text" 
             placeholder="What's on your mind, Mari?" 
             onClick={() => setIsModalOpen(true)}
@@ -88,22 +91,30 @@ const ThirdPostSection = () => {
           />
         </div>
         <div className='flex justify-between pt-2 px-2'>
-          <button className='flex items-center gap-1 text-gray-600 hover:bg-gray-100 p-2 rounded-lg text-sm'>
+          <button className={`flex items-center gap-1 p-2 rounded-lg text-sm ${
+            theme === 'dark' ? 'text-gray-300 hover:bg-gray-700' : 'text-gray-600 hover:bg-gray-100'
+          }`}>
             <FaVideo className='text-red-500 text-lg'/> Live video
           </button>
           <button 
             onClick={() => setIsButtonOpen(true)} 
-            className='flex items-center gap-1 text-gray-600 hover:bg-gray-100 p-2 rounded-lg text-sm'
+            className={`flex items-center gap-1 p-2 rounded-lg text-sm ${
+              theme === 'dark' ? 'text-gray-300 hover:bg-gray-700' : 'text-gray-600 hover:bg-gray-100'
+            }`}
           >
             <MdPhotoLibrary className='text-green-500 text-lg'/> Photo/video
           </button>
-          <button className='flex items-center gap-1 text-gray-600 hover:bg-gray-100 p-2 rounded-lg text-sm'>
+          <button className={`flex items-center gap-1 p-2 rounded-lg text-sm ${
+            theme === 'dark' ? 'text-gray-300 hover:bg-gray-700' : 'text-gray-600 hover:bg-gray-100'
+          }`}>
             <FaRegSmile className='text-yellow-500 text-lg'/> Feeling/activity
           </button>
         </div>
       </div>
       {posts.map(post => (
-        <div key={post.id} className='bg-white rounded-lg w-[510px] shadow-md p-4 mb-4'>
+        <div key={post.id} className={`rounded-lg w-[510px] shadow-md p-4 mb-4 ${
+          theme === 'dark' ? 'bg-gray-800' : 'bg-white'
+        }`}>
           <div className='flex items-center gap-3 mb-3'>
             <Image 
               src={DefaultProfilePic} 
@@ -113,15 +124,19 @@ const ThirdPostSection = () => {
               className='rounded-full object-cover border border-gray-200'
             />
             <div>
-              <span className='font-medium block'>Mari Titvinidze</span>
-              <span className='text-xs text-gray-500'>
+              <span className={`font-medium block ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>Mari Titvinidze</span>
+              <span className={`text-xs ${
+                theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
+              }`}>
                 {post.timestamp.toLocaleString()} • {post.privacy}
               </span>
             </div>
           </div>
-          <p className='mb-3'>{post.text}</p>
+          <p className={`mb-3 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>{post.text}</p>
           {post.image && (
-            <div className='mb-3 border border-gray-200 rounded-lg overflow-hidden'>
+            <div className={`mb-3 rounded-lg overflow-hidden ${
+              theme === 'dark' ? 'border-gray-700' : 'border-gray-200'
+            } border`}>
               <Image
                 src={post.image}
                 alt='Post content'
@@ -131,22 +146,36 @@ const ThirdPostSection = () => {
               />
             </div>
           )}
-          <div className='flex justify-between border-t pt-3 text-gray-500 text-sm'>
-            <button className='hover:bg-gray-100 p-1 px-2 rounded'>Like</button>
-            <button className='hover:bg-gray-100 p-1 px-2 rounded'>Comment</button>
-            <button className='hover:bg-gray-100 p-1 px-2 rounded'>Share</button>
+          <div className={`flex justify-between border-t pt-3 text-sm ${
+            theme === 'dark' ? 'border-gray-700 text-gray-300' : 'border-gray-200 text-gray-500'
+          }`}>
+            <button className={`p-1 px-2 rounded ${
+              theme === 'dark' ? 'hover:bg-gray-700' : 'hover:bg-gray-100'
+            }`}>Like</button>
+            <button className={`p-1 px-2 rounded ${
+              theme === 'dark' ? 'hover:bg-gray-700' : 'hover:bg-gray-100'
+            }`}>Comment</button>
+            <button className={`p-1 px-2 rounded ${
+              theme === 'dark' ? 'hover:bg-gray-700' : 'hover:bg-gray-100'
+            }`}>Share</button>
           </div>
         </div>
       ))}
-
-      {/* Post creation modal */}
       {(isModalOpen || isButtonOpen) && (
         <div className='fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center z-50'>
-          <div className='bg-white w-[500px] rounded-lg shadow-lg overflow-hidden'>
-            <div className='flex justify-between items-center p-4 border-b'>
-              <h2 className='text-xl font-bold'>Create post</h2>
+          <div className={`w-[500px] rounded-lg shadow-lg overflow-hidden ${
+            theme === 'dark' ? 'bg-gray-800' : 'bg-white'
+          }`}>
+            <div className={`flex justify-between items-center p-4 border-b ${
+              theme === 'dark' ? 'border-gray-700' : 'border-gray-200'
+            }`}>
+              <h2 className={`text-xl font-bold ${
+                theme === 'dark' ? 'text-white' : 'text-gray-900'
+              }`}>Create post</h2>
               <IoClose 
-                className='text-2xl cursor-pointer text-gray-500 hover:bg-gray-100 p-1 rounded-full transition' 
+                className={`text-2xl cursor-pointer p-1 rounded-full transition ${
+                  theme === 'dark' ? 'text-gray-300 hover:bg-gray-700' : 'text-gray-500 hover:bg-gray-100'
+                }`} 
                 onClick={closeModal} 
               />
             </div>
@@ -159,9 +188,13 @@ const ThirdPostSection = () => {
                 className='rounded-full object-cover border border-gray-200'
               />
               <div>
-                <span className='font-medium block'>Mari Titvinidze</span>
+                <span className={`font-medium block ${
+                  theme === 'dark' ? 'text-white' : 'text-gray-900'
+                }`}>Mari Titvinidze</span>
                 <select 
-                  className='text-xs text-gray-500 border-none bg-gray-100 rounded p-1 cursor-pointer hover:bg-gray-200 transition'
+                  className={`text-xs border-none rounded p-1 cursor-pointer hover:bg-gray-200 transition ${
+                    theme === 'dark' ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' : 'bg-gray-100 text-gray-500'
+                  }`}
                   value={privacy}
                   onChange={(e) => setPrivacy(e.target.value)}
                 >
@@ -172,14 +205,18 @@ const ThirdPostSection = () => {
               </div>
             </div>
             <textarea 
-              className='w-full min-h-[100px] p-4 text-lg border-none focus:outline-none resize-none placeholder-gray-500'
+              className={`w-full min-h-[100px] p-4 text-lg border-none focus:outline-none resize-none ${
+                theme === 'dark' ? 'bg-gray-800 text-white placeholder-gray-400' : 'bg-white placeholder-gray-500'
+              }`}
               placeholder="What's on your mind, Mari?"
               value={text}
               onChange={(e) => setText(e.target.value)}
               autoFocus
             ></textarea>
             {image && (
-              <div className='relative mx-4 mb-4 border border-gray-200 rounded-lg overflow-hidden'>
+              <div className={`relative mx-4 mb-4 rounded-lg overflow-hidden ${
+                theme === 'dark' ? 'border-gray-700' : 'border-gray-200'
+              } border`}>
                 <Image
                   src={image} 
                   alt='Selected' 
@@ -195,34 +232,48 @@ const ThirdPostSection = () => {
                 </button>
               </div>
             )}
-            <div className='flex justify-between items-center p-3 mx-3 mb-3 border border-gray-200 rounded-lg bg-gray-50'>
-              <span className='font-medium text-gray-700 ml-1'>Add to your post</span>
+            <div className={`flex justify-between items-center p-3 mx-3 mb-3 rounded-lg ${
+              theme === 'dark' ? 'bg-gray-700 border-gray-600' : 'bg-gray-50 border-gray-200'
+            } border`}>
+              <span className={`font-medium ml-1 ${
+                theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+              }`}>Add to your post</span>
               <div className='flex gap-1'>
                 <button 
                   onClick={triggerFileInput}
-                  className='text-green-600 hover:bg-gray-200 p-2 rounded-full transition'
+                  className={`hover:bg-gray-200 p-2 rounded-full transition ${
+                    theme === 'dark' ? 'text-green-500 hover:bg-gray-600' : 'text-green-600'
+                  }`}
                   title="Photo"
                 >
                   <div className='flex items-center justify-center w-8 h-8'>
                     <FaImage size={20} />
                   </div>
                 </button>
-                <button className='text-yellow-600 hover:bg-gray-200 p-2 rounded-full transition'>
+                <button className={`hover:bg-gray-200 p-2 rounded-full transition ${
+                  theme === 'dark' ? 'text-yellow-500 hover:bg-gray-600' : 'text-yellow-600'
+                }`}>
                   <div className='flex items-center justify-center w-8 h-8'>
                     <FaUserTag size={20} />
                   </div>
                 </button>
-                <button className='text-yellow-500 hover:bg-gray-200 p-2 rounded-full transition'>
+                <button className={`hover:bg-gray-200 p-2 rounded-full transition ${
+                  theme === 'dark' ? 'text-yellow-400 hover:bg-gray-600' : 'text-yellow-500'
+                }`}>
                   <div className='flex items-center justify-center w-8 h-8'>
                     <FaRegSmile size={20} />
                   </div>
                 </button>
-                <button className='text-red-500 hover:bg-gray-200 p-2 rounded-full transition'>
+                <button className={`hover:bg-gray-200 p-2 rounded-full transition ${
+                  theme === 'dark' ? 'text-red-400 hover:bg-gray-600' : 'text-red-500'
+                }`}>
                   <div className='flex items-center justify-center w-8 h-8'>
                     <FaMapMarkerAlt size={20} />
                   </div>
                 </button>
-                <button className='text-blue-500 hover:bg-gray-200 p-2 rounded-full transition'>
+                <button className={`hover:bg-gray-200 p-2 rounded-full transition ${
+                  theme === 'dark' ? 'text-blue-400 hover:bg-gray-600' : 'text-blue-500'
+                }`}>
                   <div className='flex items-center justify-center w-8 h-8'>
                     <FaGift size={20} />
                   </div>
@@ -236,7 +287,7 @@ const ThirdPostSection = () => {
               ref={fileInputRef}
               className='hidden'
             />
-            <div className='p-3 border-t'>
+            <div className='p-3 border-t border-gray-200'>
               <button
                 className={`w-full py-2.5 rounded-md font-medium text-white transition ${
                   (text.trim() || image) ? 'bg-blue-500 hover:bg-blue-600' : 'bg-gray-300 cursor-not-allowed'
